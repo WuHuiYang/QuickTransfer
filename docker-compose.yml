@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: quicktransfer-backend
+    restart: always
+    volumes:
+      - ./data/uploads:/data/uploads
+      - ./data/quicktransfer.db:/app/quicktransfer.db
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./quicktransfer.db
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-this-in-production-12345678}
+      - UPLOAD_DIR=/data/uploads
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: quicktransfer-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"

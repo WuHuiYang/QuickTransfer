@@ -1,0 +1,30 @@
+# 数据目录
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Node
+node_modules/
+dist/
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# 环境
+.env
+*.log
+
+# 系统
+.DS_Store
+Thumbs.db
