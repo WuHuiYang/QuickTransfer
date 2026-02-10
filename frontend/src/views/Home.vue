@@ -319,7 +319,9 @@ const toggleSelectAll = () => {
 // 下载文件
 const handleDownload = async (file) => {
   try {
-    const blob = await downloadFile(file.id)
+    const response = await downloadFile(file.id)
+    // response.data 是 blob
+    const blob = response.data
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -330,6 +332,7 @@ const handleDownload = async (file) => {
     window.URL.revokeObjectURL(url)
   } catch (error) {
     console.error('下载失败', error)
+    alert('下载失败，请重试')
   }
 }
 
@@ -338,7 +341,8 @@ const handleBatchDownload = async () => {
   if (fileStore.selectedFiles.length === 0) return
   try {
     const fileIds = fileStore.selectedFiles.map(f => f.id)
-    const blob = await batchDownload(fileIds)
+    const response = await batchDownload(fileIds)
+    const blob = response.data
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -350,6 +354,7 @@ const handleBatchDownload = async () => {
     fileStore.clearSelection()
   } catch (error) {
     console.error('批量下载失败', error)
+    alert('批量下载失败，请重试')
   }
 }
 

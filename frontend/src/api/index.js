@@ -24,7 +24,14 @@ api.interceptors.request.use(
 
 // 响应拦截器 - 处理错误
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    // 如果是 blob 类型（文件下载），返回整个 response
+    if (response.config.responseType === 'blob') {
+      return response
+    }
+    // 其他类型返回 data
+    return response.data
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
