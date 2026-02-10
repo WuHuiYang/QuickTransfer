@@ -57,9 +57,13 @@ export const useFileStore = defineStore('file', () => {
   }
 
   const removeFile = async (fileId) => {
+    console.log('fileStore.removeFile 被调用，文件ID:', fileId)
     try {
+      console.log('调用 deleteFile API')
       await deleteFile(fileId)
+      console.log('deleteFile API 调用成功，刷新文件列表')
       await fetchFiles()
+      console.log('文件列表刷新完成')
     } catch (error) {
       console.error('删除文件失败', error)
       throw error

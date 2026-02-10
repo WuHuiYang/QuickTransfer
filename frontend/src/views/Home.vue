@@ -137,8 +137,9 @@
       </div>
 
       <!-- 文件列表 -->
-      <div class="bg-white rounded-lg shadow">
-        <div class="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-sm font-medium text-gray-700">
+      <div class="bg-white rounded-lg shadow overflow-hidden">
+        <!-- 桌面端表头 -->
+        <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50 border-b text-sm font-medium text-gray-700">
           <div class="col-span-1">
             <input
               type="checkbox"
@@ -165,45 +166,87 @@
           <div
             v-for="file in filteredFiles"
             :key="file.id"
-            class="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition items-center"
+            class="px-6 py-4 hover:bg-gray-50 transition"
           >
-            <div class="col-span-1">
-              <input
-                type="checkbox"
-                :checked="fileStore.selectedFiles.some(f => f.id === file.id)"
-                @change="fileStore.toggleFileSelection(file)"
-                class="w-4 h-4 text-primary-500 rounded"
-              />
-            </div>
-            <div class="col-span-5 flex items-center space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+            <!-- 桌面端：grid 布局 -->
+            <div class="hidden md:grid grid-cols-12 gap-4 items-center">
+              <div class="col-span-1">
+                <input
+                  type="checkbox"
+                  :checked="fileStore.selectedFiles.some(f => f.id === file.id)"
+                  @change="fileStore.toggleFileSelection(file)"
+                  class="w-4 h-4 text-primary-500 rounded"
+                />
               </div>
-              <span class="text-sm text-gray-900 truncate">{{ file.filename }}</span>
+              <div class="col-span-5 flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <span class="text-sm text-gray-900 truncate">{{ file.filename }}</span>
+              </div>
+              <div class="col-span-2 text-sm text-gray-600">{{ formatSize(file.file_size) }}</div>
+              <div class="col-span-2 text-sm text-gray-600">{{ formatDate(file.upload_time) }}</div>
+              <div class="col-span-2 flex items-center space-x-2">
+                <button
+                  @click="handleDownload(file)"
+                  class="p-2 text-gray-400 hover:text-primary-500 transition"
+                  title="下载"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                </button>
+                <button
+                  @click="handleDelete(file)"
+                  class="p-2 text-gray-400 hover:text-red-500 transition"
+                  title="删除"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <div class="col-span-2 text-sm text-gray-600">{{ formatSize(file.file_size) }}</div>
-            <div class="col-span-2 text-sm text-gray-600">{{ formatDate(file.upload_time) }}</div>
-            <div class="col-span-2 flex items-center space-x-2">
-              <button
-                @click="handleDownload(file)"
-                class="p-2 text-gray-400 hover:text-primary-500 transition"
-                title="下载"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-              </button>
-              <button
-                @click="handleDelete(file)"
-                class="p-2 text-gray-400 hover:text-red-500 transition"
-                title="删除"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
+
+            <!-- 移动端：卡片布局 -->
+            <div class="md:hidden">
+              <div class="flex items-start space-x-3">
+                <input
+                  type="checkbox"
+                  :checked="fileStore.selectedFiles.some(f => f.id === file.id)"
+                  @change="fileStore.toggleFileSelection(file)"
+                  class="w-4 h-4 text-primary-500 rounded mt-1"
+                />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 truncate">{{ file.filename }}</p>
+                  <div class="flex items-center space-x-4 mt-1 text-xs text-gray-500">
+                    <span>{{ formatSize(file.file_size) }}</span>
+                    <span>{{ formatDate(file.upload_time) }}</span>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button
+                    @click="handleDownload(file)"
+                    class="p-2 text-primary-500 hover:text-primary-600 transition bg-primary-50 rounded-lg"
+                    title="下载"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                  <button
+                    @click="handleDelete(file)"
+                    class="p-2 text-red-500 hover:text-red-600 transition bg-red-50 rounded-lg"
+                    title="删除"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -360,12 +403,21 @@ const handleBatchDownload = async () => {
 
 // 删除文件
 const handleDelete = async (file) => {
-  if (!confirm(`确定要删除 "${file.filename}" 吗？`)) return
+  console.log('准备删除文件:', file)
+  if (!confirm(`确定要删除 "${file.filename}" 吗？`)) {
+    console.log('用户取消删除')
+    return
+  }
   try {
+    console.log('开始删除文件，ID:', file.id)
     await fileStore.removeFile(file.id)
+    console.log('文件删除成功，刷新存储信息')
     await loadStorageInfo()
+    console.log('存储信息刷新完成')
+    alert('文件已删除')
   } catch (error) {
     console.error('删除失败', error)
+    alert(`删除失败: ${error.message || error}`)
   }
 }
 
