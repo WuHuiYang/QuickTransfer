@@ -43,8 +43,14 @@ class EmailService:
 
             msg.attach(MIMEText(body, 'html'))
 
-            server = smtplib.SMTP(self.smtp_host, self.smtp_port)
-            server.starttls()
+            # 根据端口选择连接方式
+            # 465 端口使用 SSL，587 端口使用 STARTTLS
+            if self.smtp_port == 465:
+                server = smtplib.SMTP_SSL(self.smtp_host, self.smtp_port)
+            else:
+                server = smtplib.SMTP(self.smtp_host, self.smtp_port)
+                server.starttls()
+
             server.login(self.smtp_user, self.smtp_password)
             server.send_message(msg)
             server.quit()
