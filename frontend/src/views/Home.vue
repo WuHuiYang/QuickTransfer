@@ -361,21 +361,39 @@ const toggleSelectAll = () => {
 
 // 下载文件
 const handleDownload = async (file) => {
+  console.log('=== 下载按钮被点击 ===')
+  console.log('文件信息:', file)
+
+  alert(`准备下载: ${file.filename}`)
+
   try {
+    console.log('开始调用 downloadFile API，文件ID:', file.id)
     const response = await downloadFile(file.id)
+    console.log('API 返回:', response)
+
     // response.data 是 blob
     const blob = response.data
+    console.log('Blob 大小:', blob.size)
+
     const url = window.URL.createObjectURL(blob)
+    console.log('创建 Blob URL:', url)
+
     const a = document.createElement('a')
     a.href = url
     a.download = file.filename
     document.body.appendChild(a)
+
+    console.log('触发下载')
     a.click()
+
     document.body.removeChild(a)
     window.URL.revokeObjectURL(url)
+
+    console.log('下载完成')
+    alert('下载成功!')
   } catch (error) {
     console.error('下载失败', error)
-    alert('下载失败，请重试')
+    alert(`下载失败: ${error.message || error}`)
   }
 }
 
