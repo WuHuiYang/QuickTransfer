@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File as FastAPIFile, Query
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse as FastAPIFileResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 import os
@@ -154,7 +154,7 @@ async def download_file(
     file.download_count += 1
     db.commit()
 
-    return FileResponse(
+    return FastAPIFileResponse(
         path=file.file_path,
         filename=file.filename,
         media_type=file.mime_type
