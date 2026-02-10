@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File as FastAPIFile, Query
-from fastapi.responses import FileResponse as FastAPIFileResponse
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from typing import Optional
 import os
@@ -8,7 +8,7 @@ import io
 from pathlib import Path
 from ..core.database import get_db
 from ..models import User, File, Folder
-from ..schemas import FileResponse, FileListResponse
+from ..schemas import FileItem, FileListResponse
 from .auth import get_current_user
 from ..services import file_service
 from ..core.config import settings
@@ -16,7 +16,7 @@ from ..core.config import settings
 router = APIRouter(prefix="/api/files", tags=["文件"])
 
 
-@router.post("/upload", response_model=FileResponse)
+@router.post("/upload", response_model=FileItem)
 async def upload_file(
     file: UploadFile = FastAPIFile(...),
     folder_id: Optional[int] = None,
@@ -109,7 +109,7 @@ async def get_files(
     )
 
 
-@router.get("/{file_id}", response_model=FileResponse)
+@router.get("/{file_id}", response_model=FileItem)
 async def get_file(
     file_id: int,
     current_user: User = Depends(get_current_user),
@@ -154,7 +154,7 @@ async def download_file(
     file.download_count += 1
     db.commit()
 
-    return FastAPIFileResponse(
+    return FileResponse(
         path=file.file_path,
         filename=file.filename,
         media_type=file.mime_type

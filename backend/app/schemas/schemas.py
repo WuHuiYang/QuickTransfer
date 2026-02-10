@@ -60,7 +60,7 @@ class FileBase(BaseModel):
     file_size: int
 
 
-class FileResponse(FileBase):
+class FileItem(FileBase):
     id: int
     user_id: int
     stored_name: str
@@ -75,7 +75,7 @@ class FileResponse(FileBase):
 
 
 class FileListResponse(BaseModel):
-    files: list[FileResponse]
+    files: list[FileItem]
     total: int
     page: int
     page_size: int
